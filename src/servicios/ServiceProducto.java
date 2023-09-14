@@ -166,7 +166,7 @@ public class ServiceProducto {
 
             preparedStatement.close();
             
-            JOptionPane.showMessageDialog(null, "Producto eliminados");
+            JOptionPane.showMessageDialog(null, "Producto eliminado");
 
             
             conn.close();
