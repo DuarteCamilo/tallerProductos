@@ -81,27 +81,63 @@ public class ServiceCategoria {
     
     
     public static void agregarCategoria ( String nombre_categoria  ){
-        try{
-            
-          
-                String sql = "INSERT INTO categorias(nombre_categoria)" +  "VALUES(?);";
+        try {
+            int id_categoria = obtenerNuevoIdCategoria(); // Generar un nuevo id_categoria
 
-                PreparedStatement preparedStatement = conn.prepareStatement(sql);
+            String sql = "INSERT INTO categorias(id_categoria, nombre_categoria) VALUES(?, ?);";
 
+            PreparedStatement preparedStatement = conn.prepareStatement(sql);
 
-                preparedStatement.setString(1, nombre_categoria);
-                
+            preparedStatement.setInt(1, id_categoria);
+            preparedStatement.setString(2, nombre_categoria);
 
-                preparedStatement.executeUpdate();
+            preparedStatement.executeUpdate();
 
-                preparedStatement.close();
-                JOptionPane.showMessageDialog(null, "Categoria agregada");
-            //}
-                   
-        }catch( Exception ex){
+            preparedStatement.close();
+            JOptionPane.showMessageDialog(null, "Categoría agregada");
+        } catch (Exception ex) {
             Logger.getLogger(ServiceProducto.class.getName()).log(Level.SEVERE, null, ex);
-        }   
+        }
         
+    }
+    
+    public static int obtenerNuevoIdCategoria() throws SQLException {
+        // Obtener el máximo id_categoria actual en la base de datos
+        String sqlMax = "SELECT MAX(id_categoria) FROM categorias;";
+        PreparedStatement preparedStatementMax = conn.prepareStatement(sqlMax);
+        ResultSet resultSetMax = preparedStatementMax.executeQuery();
+
+        resultSetMax.next();
+        int maxId = resultSetMax.getInt(1);
+
+        resultSetMax.close();
+        preparedStatementMax.close();
+
+        // Comprobar si hay huecos en la secuencia de id_categoria
+        for (int i = 1; i <= maxId; i++) {
+            if (!idCategoriaExiste(i)) {
+                return i; // Devolver el primer id no utilizado encontrado
+            }
+        }
+
+        // Si no se encontraron huecos, devolver el siguiente número después del máximo
+        return maxId + 1;
+    }
+
+    public static boolean idCategoriaExiste(int id_categoria) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM categorias WHERE id_categoria = ?;";
+        PreparedStatement preparedStatement = conn.prepareStatement(sql);
+        preparedStatement.setInt(1, id_categoria);
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        resultSet.next();
+        int count = resultSet.getInt(1);
+
+        resultSet.close();
+        preparedStatement.close();
+
+        // Si count es igual a 0, significa que el id_categoria no existe en la base de datos
+        return count > 0;
     }
     
     

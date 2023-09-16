@@ -6,6 +6,7 @@ import javax.swing.JFrame;
 import  Controladores.ControladorVentanaCategorias;
 import Modelos.Categoria;
 import Modelos.Producto;
+import java.awt.event.KeyEvent;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -68,6 +69,11 @@ public class VentanaCategorias extends javax.swing.JFrame {
         txtId.setForeground(new java.awt.Color(53, 79, 82));
         txtId.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         txtId.setBorder(null);
+        txtId.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtIdKeyTyped(evt);
+            }
+        });
         jPanel1.add(txtId, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 110, 120, 20));
         jPanel1.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 130, 120, 10));
 
@@ -90,6 +96,11 @@ public class VentanaCategorias extends javax.swing.JFrame {
         txtNombre.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtNombreActionPerformed(evt);
+            }
+        });
+        txtNombre.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtNombreKeyTyped(evt);
             }
         });
         jPanel1.add(txtNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 170, 120, 20));
@@ -333,6 +344,38 @@ public class VentanaCategorias extends javax.swing.JFrame {
     private void txtNombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNombreActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtNombreActionPerformed
+
+    private void txtIdKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtIdKeyTyped
+        char c = evt.getKeyChar();
+        if (!Character.isDigit(c) && c != KeyEvent.VK_BACK_SPACE) {
+            getToolkit().beep();
+            evt.consume();
+            JOptionPane.showMessageDialog(null, "Ingresar solo números");
+        }
+
+        if (txtId.getText().length() >= 10 && c != KeyEvent.VK_BACK_SPACE) {
+            getToolkit().beep();
+            evt.consume();
+            JOptionPane.showMessageDialog(null, "Se ha alcanzado el límite máximo de 10 caracteres");
+        }
+    }//GEN-LAST:event_txtIdKeyTyped
+
+    private void txtNombreKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNombreKeyTyped
+        char c = evt.getKeyChar();
+
+        if (!(Character.isLetter(c) || c == ' ' || c == KeyEvent.VK_BACK_SPACE)) {
+            getToolkit().beep();
+            evt.consume();
+            JOptionPane.showMessageDialog(null, "Ingresar solo caracteres permitidos para un nombre");
+        }
+
+        if (txtNombre.getText().length() >= 200 && c != KeyEvent.VK_BACK_SPACE) {
+            getToolkit().beep();
+            evt.consume();
+            JOptionPane.showMessageDialog(null, "Se ha alcanzado el límite máximo de 200 caracteres");
+        }
+
+    }//GEN-LAST:event_txtNombreKeyTyped
 
     
     

@@ -9,11 +9,13 @@ import Modelos.Categoria;
 import Modelos.Producto;
 import com.sun.jdi.connect.spi.Connection;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import javax.swing.table.DefaultTableModel;
 
@@ -90,6 +92,11 @@ public class VentanaProductos extends javax.swing.JFrame {
         txtId.setForeground(new java.awt.Color(53, 79, 82));
         txtId.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         txtId.setBorder(null);
+        txtId.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtIdKeyTyped(evt);
+            }
+        });
         jPanel1.add(txtId, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 90, 120, 20));
         jPanel1.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 110, 120, 10));
 
@@ -109,6 +116,11 @@ public class VentanaProductos extends javax.swing.JFrame {
         txtNombre.setForeground(new java.awt.Color(53, 79, 82));
         txtNombre.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         txtNombre.setBorder(null);
+        txtNombre.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtNombreKeyTyped(evt);
+            }
+        });
         jPanel1.add(txtNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 150, 120, 20));
         jPanel1.add(jSeparator2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 170, 120, 10));
 
@@ -122,6 +134,11 @@ public class VentanaProductos extends javax.swing.JFrame {
         txtCant.setForeground(new java.awt.Color(53, 79, 82));
         txtCant.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         txtCant.setBorder(null);
+        txtCant.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtCantKeyTyped(evt);
+            }
+        });
         jPanel1.add(txtCant, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 210, 120, 20));
         jPanel1.add(jSeparator3, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 230, 120, 10));
 
@@ -342,6 +359,11 @@ public class VentanaProductos extends javax.swing.JFrame {
 
         Txt_id_Buscar.setBackground(new java.awt.Color(222, 226, 230));
         Txt_id_Buscar.setBorder(null);
+        Txt_id_Buscar.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                Txt_id_BuscarKeyTyped(evt);
+            }
+        });
         jPanel1.add(Txt_id_Buscar, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 50, 100, 20));
         jPanel1.add(jSeparator5, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 70, 100, 20));
 
@@ -462,21 +484,91 @@ public class VentanaProductos extends javax.swing.JFrame {
     private void ComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ComboBox1ActionPerformed
         Object selectedItem = ComboBox1.getSelectedItem();
         if (selectedItem != null && selectedItem.toString().equals("Añadir Categoria")) {
-            String categoria = JOptionPane.showInputDialog(null, "Ingrese la nueva categoria");
-            if(categoria!=null){
-                
+            String nombre_categoria = JOptionPane.showInputDialog(null, "Ingrese el nombre de la nueva categoría");
+            if (nombre_categoria != null) {
                 try {
-                    controlador.aniadirCategoria(categoria);  
-                    actualizarComboBox();
-                    ComboBox1.setSelectedItem(categoria);
                     
+                    controlador.aniadirCategoria(nombre_categoria);
+                    int id_categoria = obtenerIdCategoria(nombre_categoria);
+                    System.out.println(id_categoria);
+                    actualizarComboBox();
+
+                    
+                    String categoriaFormateada = id_categoria + "-" + nombre_categoria;
+
+                    
+                    ComboBox1.setSelectedItem(categoriaFormateada);
+
                 } catch (Exception e) {
                 }
-                
+
             }
-            
         }
+   
     }//GEN-LAST:event_ComboBox1ActionPerformed
+
+    
+    private void txtIdKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtIdKeyTyped
+        char c = evt.getKeyChar();
+        if (!Character.isDigit(c) && c != KeyEvent.VK_BACK_SPACE) {
+            getToolkit().beep();
+            evt.consume();
+            JOptionPane.showMessageDialog(null, "Ingresar solo números");
+        }
+
+        if (txtId.getText().length() >= 10 && c != KeyEvent.VK_BACK_SPACE) {
+            getToolkit().beep();
+            evt.consume();
+            JOptionPane.showMessageDialog(null, "Se ha alcanzado el límite máximo de 10 caracteres");
+        }
+    }//GEN-LAST:event_txtIdKeyTyped
+
+    private void txtCantKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCantKeyTyped
+        char c = evt.getKeyChar();
+        if (!Character.isDigit(c) && c != KeyEvent.VK_BACK_SPACE) {
+            getToolkit().beep();
+            evt.consume();
+            JOptionPane.showMessageDialog(null, "Ingresar solo números");
+        }
+
+        if (txtCant.getText().length() >= 10 && c != KeyEvent.VK_BACK_SPACE) {
+            getToolkit().beep();
+            evt.consume();
+            JOptionPane.showMessageDialog(null, "Se ha alcanzado el límite máximo de 10 caracteres");
+        }
+    }//GEN-LAST:event_txtCantKeyTyped
+
+    private void Txt_id_BuscarKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_Txt_id_BuscarKeyTyped
+        char c = evt.getKeyChar();
+        if (!Character.isDigit(c) && c != KeyEvent.VK_BACK_SPACE) {
+            getToolkit().beep();
+            evt.consume();
+            JOptionPane.showMessageDialog(null, "Ingresar solo números");
+        }
+
+        if (Txt_id_Buscar.getText().length() >= 10 && c != KeyEvent.VK_BACK_SPACE) {
+            getToolkit().beep();
+            evt.consume();
+            JOptionPane.showMessageDialog(null, "Se ha alcanzado el límite máximo de 10 caracteres");
+        }
+    }//GEN-LAST:event_Txt_id_BuscarKeyTyped
+
+    private void txtNombreKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNombreKeyTyped
+
+        char c = evt.getKeyChar();
+
+        if (!(Character.isLetter(c) || c == ' ' || c == KeyEvent.VK_BACK_SPACE)) {
+            getToolkit().beep();
+            evt.consume();
+            JOptionPane.showMessageDialog(null, "Ingresar solo caracteres permitidos para un nombre");
+        }
+
+        if (txtNombre.getText().length() >= 200 && c != KeyEvent.VK_BACK_SPACE) {
+            getToolkit().beep();
+            evt.consume();
+            JOptionPane.showMessageDialog(null, "Se ha alcanzado el límite máximo de 200 caracteres");
+        }
+    }//GEN-LAST:event_txtNombreKeyTyped
 
     
     public void LimpiarCampos(){
@@ -487,28 +579,51 @@ public class VentanaProductos extends javax.swing.JFrame {
         
     }
     
-    public void actualizarComboBox(){
+    public int obtenerIdCategoria(String nombreCategoria) {
+        try {
+            ArrayList<Categoria> listaCategorias = controlador.traerCategorias();
+            for (Categoria categoria : listaCategorias) {
+                if (categoria.getNombre_categoria().equals(nombreCategoria)) {
+                    return categoria.getId_categoria();
+                }
+            }
+        } catch (Exception e) {
+           
+        }
+        System.out.println("La categoría no se encontró o hubo un error.");
+        return -1; 
+    }
+    
+    public void actualizarComboBox() {
         ComboBox1.removeAllItems();
-        ArrayList<String> lista_str = new ArrayList();
-        
-        try{
+        ArrayList<String> lista_str = new ArrayList<>();
+
+        try {
             ArrayList<Categoria> listaCategorias = controlador.traerCategorias();
             for (int i = 0; i < listaCategorias.size(); i++) {
                 Categoria categoria = listaCategorias.get(i);
                 String id_categoria = String.valueOf(categoria.getId_categoria());
                 String nombre_categoria = categoria.getNombre_categoria();
-                lista_str.add(id_categoria + "-" +nombre_categoria);  
+                lista_str.add(id_categoria + "-" + nombre_categoria);
             }
+
+            Collections.sort(lista_str, (a, b) -> {
+                int idA = Integer.parseInt(a.split("-")[0]);
+                int idB = Integer.parseInt(b.split("-")[0]);
+                return Integer.compare(idA, idB);
+            });
+
             ComboBox1.addItem("-Seleccionar-");
             for (int i = 0; i < lista_str.size(); i++) {
                 String item = lista_str.get(i);
                 ComboBox1.addItem(item);
             }
             ComboBox1.addItem("Añadir Categoria");
-            
+
         } catch (Exception e) {
         }
     }
+
     
     public void actualizarTabla(){
         try{
