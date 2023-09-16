@@ -59,7 +59,7 @@ public class Inicio extends javax.swing.JFrame {
         btnTablaFiltro.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         btnTablaFiltro.setForeground(new java.awt.Color(53, 79, 82));
         btnTablaFiltro.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        btnTablaFiltro.setText("Ver tabla");
+        btnTablaFiltro.setText("Ver tabla Productos");
         btnTablaFiltro.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnTablaFiltro.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -165,19 +165,19 @@ public class Inicio extends javax.swing.JFrame {
 
     private void btnProductosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnProductosMouseClicked
         this.dispose();
-        JFrame v2 = new VentanaProductos();
+        VentanaProductos v2 = new VentanaProductos();
         v2.setVisible(true);
     }//GEN-LAST:event_btnProductosMouseClicked
 
     private void btnTablaFiltroMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnTablaFiltroMouseClicked
         this.dispose();
-        JFrame v2 = new VentanaFiltro();
+        VentanaFiltro v2 = new VentanaFiltro();
         v2.setVisible(true);
     }//GEN-LAST:event_btnTablaFiltroMouseClicked
 
     private void btnCategoriasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCategoriasMouseClicked
         this.dispose();
-        JFrame v2 = new VentanaCategorias();
+        VentanaCategorias v2 = new VentanaCategorias();
         v2.setVisible(true);
     }//GEN-LAST:event_btnCategoriasMouseClicked
 

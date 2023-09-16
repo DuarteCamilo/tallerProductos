@@ -6,6 +6,7 @@ package servicios;
 
 import ConexioDB.ConexionDB;
 import ConexioDB.ConexionDB;
+import Modelos.Categoria;
 import Modelos.Producto;
 //import Vistas.VentanaUsuario;
 import java.sql.Connection;
@@ -15,7 +16,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.sql.ResultSet;
 import java.sql.PreparedStatement;
+import java.sql.ResultSetMetaData;
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -34,23 +38,27 @@ public class ServiceProducto {
     } 
     
     
+    
+    
     public static Producto  buscarProducto(int id_producto  ) {
+        ResultSet rs = null;
         try {
             
-            String sql = "SELECT nombre_producto,cantidad_disp,id_categoria FROM productos WHERE id_producto=?" ;
+            String sql = "SELECT nombre_producto,cantidad_disp,id_categoria FROM productos WHERE id_producto=? ;" ;
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
-            preparedStatement.setString(1, String.valueOf(id_producto) );
+            preparedStatement.setInt(1, id_producto );
             
 
 
-            ResultSet rs = preparedStatement.executeQuery();
+            rs = preparedStatement.executeQuery();
 
             if (rs.next()) {
 
                 String nombre_producto = rs.getString("nombre_producto");
                 
-                int cantidad_disp = rs.getInt("cantidad_dis");
+                int cantidad_disp = rs.getInt("cantidad_disp");
                 int id_categoria = rs.getInt("id_categoria");
+                
                 
                 
                 Producto producto = new Producto(id_producto, nombre_producto, cantidad_disp, id_categoria);
@@ -58,7 +66,7 @@ public class ServiceProducto {
                 
                         
             }else {
-            JOptionPane.showMessageDialog(null, " El producto no se encuentra en la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, " El producto no se encuentra en la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
                 return null;
             }
 
@@ -79,7 +87,7 @@ public class ServiceProducto {
             
            
         
-            String sqlBuscarUsuario = "SELECT id_producto FROM productos WHERE id_productos=?";
+            String sqlBuscarUsuario = "SELECT id_producto FROM productos WHERE id_producto=?";
             PreparedStatement buscarUsuarioStmt = conn.prepareStatement(sqlBuscarUsuario);
             buscarUsuarioStmt.setInt(1, id_producto);
             ResultSet resultado = buscarUsuarioStmt.executeQuery();
@@ -87,19 +95,19 @@ public class ServiceProducto {
             
             if (resultado.next()) {
                 
-                JOptionPane.showMessageDialog(null, "El usuario con el ID " + id_producto + " ya está registrado", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "El producto con el ID " + id_producto + " ya está registrado", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
 
             
-                String sql = "INSERT INTO usuarios(id_producto,nombre_producto,cantidad_disp,id_categoria)" +  "VALUES(?,?,?,?);";
+                String sql = "INSERT INTO productos(id_producto,nombre_producto,cantidad_disp,id_categoria)" +  "VALUES(?,?,?,?);";
 
                 PreparedStatement preparedStatement = conn.prepareStatement(sql);
 
 
-                preparedStatement.setString(1, String.valueOf(id_producto));
+                preparedStatement.setInt(1, id_producto);
                 preparedStatement.setString(2, nombre_producto);
-                preparedStatement.setString(3, String.valueOf(cantidad_disp));
-                preparedStatement.setString(4, String.valueOf(id_categoria));
+                preparedStatement.setInt(3, cantidad_disp);
+                preparedStatement.setInt(4, id_categoria);
 
                 preparedStatement.executeUpdate();
 
@@ -123,30 +131,29 @@ public class ServiceProducto {
 
             String sqlBuscar = "SELECT id_producto FROM productos WHERE id_producto = ?";
             PreparedStatement buscarUsuarioStmt1 = conn.prepareStatement(sqlBuscar);
-            buscarUsuarioStmt1.setString(1, String.valueOf(id_producto));
+            buscarUsuarioStmt1.setInt(1, id_producto);
             ResultSet resultado1 = buscarUsuarioStmt1.executeQuery();
 
                 
             if(resultado1.next()){
-                JOptionPane.showMessageDialog(null, "El PRODUCTO con el numero de ID " + id_producto + " ya está registrado", "Error", JOptionPane.ERROR_MESSAGE);               
-            }
-            else {
-                String sql = "UPDATE productos set nombre_producto=?,cantidad_disp,id_categoria=? where id_producto=?;";
-            
+                String sql = "UPDATE productos SET nombre_producto=?, cantidad_disp=?, id_categoria=? WHERE id_producto=?;";          
             
                 PreparedStatement preparedStatement = conn.prepareStatement(sql);
 
 
                 
                 preparedStatement.setString(1, nombre_producto);
-                preparedStatement.setString(2, String.valueOf(cantidad_disp));
-                preparedStatement.setString(3, String.valueOf(id_categoria));
-                preparedStatement.setString(4, String.valueOf(id_producto));
+                preparedStatement.setInt(2, cantidad_disp);
+                preparedStatement.setInt(3, id_categoria);
+                preparedStatement.setInt(4, id_producto);
 
                 preparedStatement.executeUpdate();
 
                 preparedStatement.close();
                 JOptionPane.showMessageDialog(null, "Datos actualizados");
+            }else {
+                
+                JOptionPane.showMessageDialog(null, "El producto con el numero de ID " + id_producto + " no está registrado", "Error", JOptionPane.ERROR_MESSAGE);               
 
             }
                    
@@ -162,6 +169,9 @@ public class ServiceProducto {
             String sql = "DELETE from productos where id_producto=?;";
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setInt(1, id_producto );
+            
+            
+            
             preparedStatement.executeUpdate();
 
             preparedStatement.close();
@@ -176,6 +186,53 @@ public class ServiceProducto {
         }
 
     }
+    
+    public static ArrayList obtenerProductos(int id_categoria){
+        ResultSet rs = null;
+        ArrayList<Producto> productos = new ArrayList<>();
+        try {
+            
+            String sql = "SELECT id_producto,nombre_producto,cantidad_disp FROM productos WHERE id_categoria=? ;" ;
+            PreparedStatement preparedStatement = conn.prepareStatement(sql);
+            preparedStatement.setInt(1, id_categoria );
+            
+
+
+            rs = preparedStatement.executeQuery();
+
+            while (rs.next()) {
+
+                String nombre_producto = rs.getString("nombre_producto");
+                
+                int cantidad_disp = rs.getInt("cantidad_disp");
+                int id_producto = rs.getInt("id_producto");
+                
+                
+                
+                
+                Producto producto = new Producto(id_producto, nombre_producto, cantidad_disp, id_categoria);
+                productos.add(producto);
+                
+                
+                
+                        
+           }
+            
+           return productos;
+//            else {
+//                JOptionPane.showMessageDialog(null, " El producto no se encuentra en la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
+//                return null;
+//            }
+
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(ServiceProducto.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+        
+    }
+    
+    
    
     
 }

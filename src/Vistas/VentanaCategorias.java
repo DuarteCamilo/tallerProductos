@@ -1,19 +1,32 @@
 
 package Vistas;
 
+import ConexioDB.ConexionDB;
 import javax.swing.JFrame;
+import  Controladores.ControladorVentanaCategorias;
+import Modelos.Categoria;
+import Modelos.Producto;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
  * @author diaza
  */
 public class VentanaCategorias extends javax.swing.JFrame {
+    private ControladorVentanaCategorias controlador;
 
     /**
      * Creates new form VentanaCategorias
      */
     public VentanaCategorias() {
         initComponents();
+        this.controlador = new ControladorVentanaCategorias();
+        actualizarTabla();
     }
 
     /**
@@ -26,18 +39,15 @@ public class VentanaCategorias extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        txtNombre = new javax.swing.JTextField();
+        txtId = new javax.swing.JTextField();
         jSeparator1 = new javax.swing.JSeparator();
         jLabel7 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        txtNombre1 = new javax.swing.JTextField();
+        txtNombre = new javax.swing.JTextField();
         jSeparator2 = new javax.swing.JSeparator();
         jLabel8 = new javax.swing.JLabel();
-        jSeparator4 = new javax.swing.JSeparator();
-        jLabel10 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tablaCategoria = new javax.swing.JTable();
-        jComboBox1 = new javax.swing.JComboBox<>();
         jPanel3 = new javax.swing.JPanel();
         btnGuardar = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
@@ -53,12 +63,12 @@ public class VentanaCategorias extends javax.swing.JFrame {
         jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(92, 107, 115), 7));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        txtNombre.setBackground(new java.awt.Color(222, 226, 230));
-        txtNombre.setFont(new java.awt.Font("Segoe UI", 1, 10)); // NOI18N
-        txtNombre.setForeground(new java.awt.Color(53, 79, 82));
-        txtNombre.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        txtNombre.setBorder(null);
-        jPanel1.add(txtNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 110, 120, 20));
+        txtId.setBackground(new java.awt.Color(222, 226, 230));
+        txtId.setFont(new java.awt.Font("Segoe UI", 1, 10)); // NOI18N
+        txtId.setForeground(new java.awt.Color(53, 79, 82));
+        txtId.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        txtId.setBorder(null);
+        jPanel1.add(txtId, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 110, 120, 20));
         jPanel1.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 130, 120, 10));
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -72,24 +82,23 @@ public class VentanaCategorias extends javax.swing.JFrame {
         jLabel6.setText("Categoria");
         jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 40, 160, 30));
 
-        txtNombre1.setBackground(new java.awt.Color(222, 226, 230));
-        txtNombre1.setFont(new java.awt.Font("Segoe UI", 1, 10)); // NOI18N
-        txtNombre1.setForeground(new java.awt.Color(53, 79, 82));
-        txtNombre1.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        txtNombre1.setBorder(null);
-        jPanel1.add(txtNombre1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 170, 120, 20));
+        txtNombre.setBackground(new java.awt.Color(222, 226, 230));
+        txtNombre.setFont(new java.awt.Font("Segoe UI", 1, 10)); // NOI18N
+        txtNombre.setForeground(new java.awt.Color(53, 79, 82));
+        txtNombre.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        txtNombre.setBorder(null);
+        txtNombre.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtNombreActionPerformed(evt);
+            }
+        });
+        jPanel1.add(txtNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 170, 120, 20));
         jPanel1.add(jSeparator2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 190, 120, 10));
 
         jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel8.setForeground(new java.awt.Color(53, 79, 82));
         jLabel8.setText("Nombre");
         jPanel1.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 150, -1, -1));
-        jPanel1.add(jSeparator4, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 250, 120, 10));
-
-        jLabel10.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel10.setForeground(new java.awt.Color(53, 79, 82));
-        jLabel10.setText("Categoria Id");
-        jPanel1.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 210, -1, -1));
 
         tablaCategoria.setBackground(new java.awt.Color(255, 255, 255));
         tablaCategoria.setForeground(new java.awt.Color(53, 79, 82));
@@ -125,11 +134,6 @@ public class VentanaCategorias extends javax.swing.JFrame {
         }
 
         jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 40, 390, 140));
-
-        jComboBox1.setBackground(new java.awt.Color(222, 226, 230));
-        jComboBox1.setForeground(new java.awt.Color(53, 79, 82));
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "", "1" }));
-        jPanel1.add(jComboBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 230, 120, -1));
 
         jPanel3.setBackground(new java.awt.Color(92, 107, 115));
 
@@ -268,22 +272,117 @@ public class VentanaCategorias extends javax.swing.JFrame {
 
     private void btnGuardarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnGuardarMouseClicked
 
+        if(txtId.getText().isEmpty() || txtNombre.getText().isEmpty()   ){
+            JOptionPane.showMessageDialog(rootPane, "Ingrese todos los campos de texto para agregar la categoria en la base de datos");
+            return;
+        }
+        
+        try {
+            int id_categoria = Integer.parseInt(txtId.getText()) ;
+            String nombre_categoria = txtNombre.getText();
+            
+         
+            controlador.agregarCategoriaFul(id_categoria , nombre_categoria);
+            LimpiarCampos();
+            actualizarTabla();
+
+        } catch (Exception e) {
+        }
     }//GEN-LAST:event_btnGuardarMouseClicked
 
     private void btnEditarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnEditarMouseClicked
+        if(txtId.getText().isEmpty() || txtNombre.getText().isEmpty()   ){
+            JOptionPane.showMessageDialog(rootPane, "Ingrese todos los campos de texto para actualizar los datos de la categoria en la base de datos");
+            return;
+        }
+       
+        try {
+           
+            String nombre_categoria = txtNombre.getText();
+          
+            int id_categoria = Integer.parseInt(txtId.getText()) ;
+            Categoria categoria = new Categoria(id_categoria, nombre_categoria);
+            controlador.editarCategoria(categoria);
+            LimpiarCampos();
+            actualizarTabla();
 
+        } catch (Exception e) {
+        }
     }//GEN-LAST:event_btnEditarMouseClicked
 
     private void btnEliminarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnEliminarMouseClicked
-
+        if(txtId.getText().isEmpty()){
+            JOptionPane.showMessageDialog(rootPane, "Ingrese un numero de id en el campo de texto para eliminar la categoria");
+        }else{
+            try {
+                int id_categoria = Integer.parseInt(txtId.getText());
+                controlador.eliminarCategoria(id_categoria);
+                LimpiarCampos();
+                actualizarTabla();
+            } catch (Exception ex) {
+            } 
+        }
     }//GEN-LAST:event_btnEliminarMouseClicked
 
     private void btnVolverMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnVolverMouseClicked
         this.dispose();
-        JFrame v2 = new Inicio();
+        Inicio v2 = new Inicio();
         v2.setVisible(true);
     }//GEN-LAST:event_btnVolverMouseClicked
 
+    private void txtNombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNombreActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtNombreActionPerformed
+
+    
+    
+    public void LimpiarCampos(){
+        txtId.setText("");
+        txtNombre.setText("");
+    }
+    
+    public void actualizarTabla(){
+        try{
+            DefaultTableModel modelo = new  DefaultTableModel();
+            tablaCategoria.setModel(modelo);
+            
+            PreparedStatement ps = null;
+            ResultSet rs = null;
+            java.sql.Connection conn = new ConexionDB().connect();
+    
+            
+            String sql = "SELECT id_categoria,nombre_categoria  FROM categorias;";                    
+            ps = conn.prepareStatement(sql);
+            rs = ps.executeQuery();
+
+            
+            ResultSetMetaData rsMd = (ResultSetMetaData) rs.getMetaData();
+            
+            int cantidadColumnas = rsMd.getColumnCount();
+            
+            modelo.addColumn("Id");
+            modelo.addColumn("Nombre_Categoria");
+
+
+            
+
+            int anchos[] = {50, 100 };
+            for (int i = 0; i < tablaCategoria.getColumnCount(); i++) {
+                tablaCategoria.getColumnModel().getColumn(i).setPreferredWidth(anchos[i]);                
+            }
+            
+            while(rs.next()){
+                Object[] filas = new Object[cantidadColumnas];
+                for (int i = 0; i < cantidadColumnas; i++) {
+                    filas[i] = rs.getObject(i + 1);
+                }
+                modelo.addRow(filas);
+            }
+            
+        }catch(SQLException ex){
+            System.err.println(ex.toString());
+        }
+    }
     /**
      * @param args the command line arguments
      */
@@ -324,8 +423,6 @@ public class VentanaCategorias extends javax.swing.JFrame {
     private javax.swing.JLabel btnEliminar;
     private javax.swing.JLabel btnGuardar;
     private javax.swing.JLabel btnVolver;
-    private javax.swing.JComboBox<String> jComboBox1;
-    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
@@ -337,9 +434,8 @@ public class VentanaCategorias extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
-    private javax.swing.JSeparator jSeparator4;
     private javax.swing.JTable tablaCategoria;
+    private javax.swing.JTextField txtId;
     private javax.swing.JTextField txtNombre;
-    private javax.swing.JTextField txtNombre1;
     // End of variables declaration//GEN-END:variables
 }

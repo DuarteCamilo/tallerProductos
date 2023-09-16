@@ -1,19 +1,43 @@
 
 package Vistas;
 
-import javax.swing.JFrame;
+
+import ConexioDB.ConexionDB;
+import javax.swing.JOptionPane;
+import Controladores.ControladorVentanaProductos;
+import Modelos.Categoria;
+import Modelos.Producto;
+import com.sun.jdi.connect.spi.Connection;
+import java.awt.event.ItemListener;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.util.ArrayList;
+
+import javax.swing.table.DefaultTableModel;
+
+
 
 /**
  *
  * @author diaza
  */
 public class VentanaProductos extends javax.swing.JFrame {
+    
+    private ControladorVentanaProductos controlador;
+    
 
     /**
      * Creates new form VentanaProductos
      */
     public VentanaProductos() {
+        
         initComponents();
+        this.controlador = new ControladorVentanaProductos();
+        actualizarComboBox();
+        actualizarTabla();
+        
     }
 
     /**
@@ -26,21 +50,21 @@ public class VentanaProductos extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        txtNombre = new javax.swing.JTextField();
+        txtId = new javax.swing.JTextField();
         jSeparator1 = new javax.swing.JSeparator();
         jLabel7 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        txtNombre1 = new javax.swing.JTextField();
+        txtNombre = new javax.swing.JTextField();
         jSeparator2 = new javax.swing.JSeparator();
         jLabel8 = new javax.swing.JLabel();
-        txtNombre2 = new javax.swing.JTextField();
+        txtCant = new javax.swing.JTextField();
         jSeparator3 = new javax.swing.JSeparator();
         jLabel9 = new javax.swing.JLabel();
         jSeparator4 = new javax.swing.JSeparator();
         jLabel10 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tablaProducto = new javax.swing.JTable();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        tablaProductos = new javax.swing.JTable();
+        ComboBox1 = new javax.swing.JComboBox<>();
         jPanel3 = new javax.swing.JPanel();
         btnGuardar = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
@@ -49,6 +73,11 @@ public class VentanaProductos extends javax.swing.JFrame {
         btnEditar = new javax.swing.JLabel();
         jPanel6 = new javax.swing.JPanel();
         btnVolver = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        btBuscar = new javax.swing.JLabel();
+        jLabel11 = new javax.swing.JLabel();
+        Txt_id_Buscar = new javax.swing.JTextField();
+        jSeparator5 = new javax.swing.JSeparator();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -56,12 +85,12 @@ public class VentanaProductos extends javax.swing.JFrame {
         jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(92, 107, 115), 7));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        txtNombre.setBackground(new java.awt.Color(222, 226, 230));
-        txtNombre.setFont(new java.awt.Font("Segoe UI", 1, 10)); // NOI18N
-        txtNombre.setForeground(new java.awt.Color(53, 79, 82));
-        txtNombre.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        txtNombre.setBorder(null);
-        jPanel1.add(txtNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 90, 120, 20));
+        txtId.setBackground(new java.awt.Color(222, 226, 230));
+        txtId.setFont(new java.awt.Font("Segoe UI", 1, 10)); // NOI18N
+        txtId.setForeground(new java.awt.Color(53, 79, 82));
+        txtId.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        txtId.setBorder(null);
+        jPanel1.add(txtId, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 90, 120, 20));
         jPanel1.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 110, 120, 10));
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -75,25 +104,25 @@ public class VentanaProductos extends javax.swing.JFrame {
         jLabel6.setText("Producto");
         jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 20, 160, 30));
 
-        txtNombre1.setBackground(new java.awt.Color(222, 226, 230));
-        txtNombre1.setFont(new java.awt.Font("Segoe UI", 1, 10)); // NOI18N
-        txtNombre1.setForeground(new java.awt.Color(53, 79, 82));
-        txtNombre1.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        txtNombre1.setBorder(null);
-        jPanel1.add(txtNombre1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 150, 120, 20));
+        txtNombre.setBackground(new java.awt.Color(222, 226, 230));
+        txtNombre.setFont(new java.awt.Font("Segoe UI", 1, 10)); // NOI18N
+        txtNombre.setForeground(new java.awt.Color(53, 79, 82));
+        txtNombre.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        txtNombre.setBorder(null);
+        jPanel1.add(txtNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 150, 120, 20));
         jPanel1.add(jSeparator2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 170, 120, 10));
 
         jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel8.setForeground(new java.awt.Color(53, 79, 82));
-        jLabel8.setText("Nombre");
-        jPanel1.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 130, -1, -1));
+        jLabel8.setText("Ingrese el numero de  id:");
+        jPanel1.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 50, -1, -1));
 
-        txtNombre2.setBackground(new java.awt.Color(222, 226, 230));
-        txtNombre2.setFont(new java.awt.Font("Segoe UI", 1, 10)); // NOI18N
-        txtNombre2.setForeground(new java.awt.Color(53, 79, 82));
-        txtNombre2.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        txtNombre2.setBorder(null);
-        jPanel1.add(txtNombre2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 210, 120, 20));
+        txtCant.setBackground(new java.awt.Color(222, 226, 230));
+        txtCant.setFont(new java.awt.Font("Segoe UI", 1, 10)); // NOI18N
+        txtCant.setForeground(new java.awt.Color(53, 79, 82));
+        txtCant.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        txtCant.setBorder(null);
+        jPanel1.add(txtCant, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 210, 120, 20));
         jPanel1.add(jSeparator3, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 230, 120, 10));
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -107,9 +136,9 @@ public class VentanaProductos extends javax.swing.JFrame {
         jLabel10.setText("Categoria Id");
         jPanel1.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 250, -1, -1));
 
-        tablaProducto.setBackground(new java.awt.Color(255, 255, 255));
-        tablaProducto.setForeground(new java.awt.Color(53, 79, 82));
-        tablaProducto.setModel(new javax.swing.table.DefaultTableModel(
+        tablaProductos.setBackground(new java.awt.Color(255, 255, 255));
+        tablaProductos.setForeground(new java.awt.Color(53, 79, 82));
+        tablaProductos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -132,22 +161,27 @@ public class VentanaProductos extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        tablaProducto.setSelectionBackground(new java.awt.Color(53, 79, 82));
-        tablaProducto.setSelectionForeground(new java.awt.Color(255, 255, 255));
-        jScrollPane1.setViewportView(tablaProducto);
-        if (tablaProducto.getColumnModel().getColumnCount() > 0) {
-            tablaProducto.getColumnModel().getColumn(0).setResizable(false);
-            tablaProducto.getColumnModel().getColumn(1).setResizable(false);
-            tablaProducto.getColumnModel().getColumn(2).setResizable(false);
-            tablaProducto.getColumnModel().getColumn(3).setResizable(false);
+        tablaProductos.setSelectionBackground(new java.awt.Color(53, 79, 82));
+        tablaProductos.setSelectionForeground(new java.awt.Color(255, 255, 255));
+        jScrollPane1.setViewportView(tablaProductos);
+        if (tablaProductos.getColumnModel().getColumnCount() > 0) {
+            tablaProductos.getColumnModel().getColumn(0).setResizable(false);
+            tablaProductos.getColumnModel().getColumn(1).setResizable(false);
+            tablaProductos.getColumnModel().getColumn(2).setResizable(false);
+            tablaProductos.getColumnModel().getColumn(3).setResizable(false);
         }
 
-        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 40, 390, 140));
+        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 100, 490, 140));
 
-        jComboBox1.setBackground(new java.awt.Color(222, 226, 230));
-        jComboBox1.setForeground(new java.awt.Color(53, 79, 82));
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "", "1" }));
-        jPanel1.add(jComboBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 270, 120, -1));
+        ComboBox1.setBackground(new java.awt.Color(222, 226, 230));
+        ComboBox1.setForeground(new java.awt.Color(53, 79, 82));
+        ComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "", "1" }));
+        ComboBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ComboBox1ActionPerformed(evt);
+            }
+        });
+        jPanel1.add(ComboBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 270, 120, -1));
 
         jPanel3.setBackground(new java.awt.Color(92, 107, 115));
 
@@ -178,7 +212,7 @@ public class VentanaProductos extends javax.swing.JFrame {
                 .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
-        jPanel1.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 210, 140, 30));
+        jPanel1.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 260, 140, 30));
 
         jPanel4.setBackground(new java.awt.Color(92, 107, 115));
 
@@ -198,9 +232,9 @@ public class VentanaProductos extends javax.swing.JFrame {
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addComponent(btnEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(btnEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -209,7 +243,7 @@ public class VentanaProductos extends javax.swing.JFrame {
                 .addComponent(btnEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
-        jPanel1.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 270, 140, 30));
+        jPanel1.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 310, 140, 30));
 
         jPanel5.setBackground(new java.awt.Color(92, 107, 115));
 
@@ -229,14 +263,18 @@ public class VentanaProductos extends javax.swing.JFrame {
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(btnEditar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(btnEditar, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(btnEditar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(btnEditar, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
-        jPanel1.add(jPanel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 210, -1, -1));
+        jPanel1.add(jPanel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 260, -1, -1));
 
         jPanel6.setBackground(new java.awt.Color(92, 107, 115));
 
@@ -256,28 +294,68 @@ public class VentanaProductos extends javax.swing.JFrame {
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(btnVolver, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addComponent(btnVolver, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(btnVolver, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(btnVolver))
         );
 
-        jPanel1.add(jPanel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 270, -1, -1));
+        jPanel1.add(jPanel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 330, 70, -1));
+
+        jPanel2.setBackground(new java.awt.Color(53, 79, 82));
+
+        btBuscar.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btBuscar.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        btBuscar.setText("Buscar");
+        btBuscar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btBuscarMouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(btBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(btBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+
+        jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 40, 100, 30));
+
+        jLabel11.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel11.setForeground(new java.awt.Color(53, 79, 82));
+        jLabel11.setText("Nombre");
+        jPanel1.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 130, -1, -1));
+
+        Txt_id_Buscar.setBackground(new java.awt.Color(222, 226, 230));
+        Txt_id_Buscar.setBorder(null);
+        jPanel1.add(Txt_id_Buscar, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 50, 100, 20));
+        jPanel1.add(jSeparator5, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 70, 100, 20));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 583, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 676, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 327, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 365, Short.MAX_VALUE)
         );
 
         pack();
@@ -285,22 +363,198 @@ public class VentanaProductos extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnEliminarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnEliminarMouseClicked
-
+        if(txtId.getText().isEmpty()){
+            JOptionPane.showMessageDialog(rootPane, "Ingrese un numero de id en el campo de texto para eliminar el producto");
+        }else{
+            try {
+                int id_producto = Integer.parseInt(Txt_id_Buscar.getText());
+                controlador.eliminar(id_producto);
+                LimpiarCampos();
+                actualizarTabla();
+            } catch (Exception ex) {
+            } 
+        }
     }//GEN-LAST:event_btnEliminarMouseClicked
 
     private void btnGuardarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnGuardarMouseClicked
+        if(txtId.getText().isEmpty() || txtNombre.getText().isEmpty() || txtCant.getText().isEmpty()  ){
+            JOptionPane.showMessageDialog(rootPane, "Ingrese todos los campos de texto para agregar el producto en la base de datos");
+            return;
+        }
+        
+        if(ComboBox1.getSelectedIndex()==0 || ComboBox1.getSelectedItem().equals("-Seleccionar-") ){
+            JOptionPane.showMessageDialog(rootPane, "Selecione una categoria para agregar el producto a la base de datos");
+            return;
+        }
+        try {
+            int id_producto = Integer.parseInt(txtId.getText()) ;
+            String nombre_producto = txtNombre.getText();
+            int cantidad_disp = Integer.parseInt(txtCant.getText());
+            String categoria1 = ComboBox1.getSelectedItem().toString();
+            String[] catediv = categoria1.split("-",2);
+            int id_categoria = Integer.parseInt(catediv[0]);
+            Producto producto = new Producto(id_producto, nombre_producto, cantidad_disp, id_categoria);
+            controlador.crearProducto(producto);
+            LimpiarCampos();
+            actualizarTabla();
 
+        } catch (Exception e) {
+        }
+        
+        
     }//GEN-LAST:event_btnGuardarMouseClicked
 
     private void btnEditarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnEditarMouseClicked
+        if(txtId.getText().isEmpty() || txtNombre.getText().isEmpty() || txtCant.getText().isEmpty()  ){
+            JOptionPane.showMessageDialog(rootPane, "Ingrese todos los campos de texto para actualizar los datos del producto en la base de datos");
+            return;
+        }
+        
+        if(ComboBox1.getSelectedIndex()==0 || ComboBox1.getSelectedItem().equals("-Seleccionar-") ){
+            JOptionPane.showMessageDialog(rootPane, "Selecione una categoria para actualizar los datos del producto");
+            return;
+        }
+        try {
+            int id_producto = Integer.parseInt(txtId.getText()) ;
+            String nombre_producto = txtNombre.getText();
+            int cantidad_disp = Integer.parseInt(txtCant.getText());
+            String categoria1 = ComboBox1.getSelectedItem().toString();
+            String[] catediv = categoria1.split("-",2);
+            int id_categoria = Integer.parseInt(catediv[0]);
+            Producto producto = new Producto(id_producto, nombre_producto, cantidad_disp, id_categoria);
+            controlador.editarProducto(producto);
+            LimpiarCampos();
+            actualizarTabla();
 
+        } catch (Exception e) {
+        }
+        
     }//GEN-LAST:event_btnEditarMouseClicked
 
     private void btnVolverMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnVolverMouseClicked
         this.dispose();
-        JFrame v2 = new Inicio();
+        Inicio v2 = new Inicio();
         v2.setVisible(true);
     }//GEN-LAST:event_btnVolverMouseClicked
+
+    private void btBuscarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btBuscarMouseClicked
+        if(Txt_id_Buscar.getText().isEmpty()){
+            JOptionPane.showMessageDialog(rootPane, "Ingrese un numero de id en el campo de texto para buscar el producto en la base de datos");
+        }else{
+            try {
+                int id_producto = Integer.parseInt(Txt_id_Buscar.getText());
+                Producto producto = controlador.buscarProducto(id_producto);
+
+                txtNombre.setText(producto.getNombre_producto());
+                txtId.setText(String.valueOf(producto.getId_producto()));
+                txtCant.setText(String.valueOf(producto.getCantidad_disp()));
+               
+                String name =controlador.obternerCategoria(producto.getId_categoria());
+                String completo = String.valueOf(producto.getId_categoria())+"-"+name;
+                ComboBox1.setSelectedItem(completo);
+                
+            } catch (Exception ex) {
+            } 
+        }
+ 
+    }//GEN-LAST:event_btBuscarMouseClicked
+
+    private void ComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ComboBox1ActionPerformed
+        Object selectedItem = ComboBox1.getSelectedItem();
+        if (selectedItem != null && selectedItem.toString().equals("Añadir Categoria")) {
+            String categoria = JOptionPane.showInputDialog(null, "Ingrese la nueva categoria");
+            if(categoria!=null){
+                
+                try {
+                    controlador.aniadirCategoria(categoria);  
+                    actualizarComboBox();
+                    ComboBox1.setSelectedItem(categoria);
+                    
+                } catch (Exception e) {
+                }
+                
+            }
+            
+        }
+    }//GEN-LAST:event_ComboBox1ActionPerformed
+
+    
+    public void LimpiarCampos(){
+        txtId.setText("");
+        txtCant.setText("");
+        txtNombre.setText("");
+        actualizarComboBox();
+        
+    }
+    
+    public void actualizarComboBox(){
+        ComboBox1.removeAllItems();
+        ArrayList<String> lista_str = new ArrayList();
+        
+        try{
+            ArrayList<Categoria> listaCategorias = controlador.traerCategorias();
+            for (int i = 0; i < listaCategorias.size(); i++) {
+                Categoria categoria = listaCategorias.get(i);
+                String id_categoria = String.valueOf(categoria.getId_categoria());
+                String nombre_categoria = categoria.getNombre_categoria();
+                lista_str.add(id_categoria + "-" +nombre_categoria);  
+            }
+            ComboBox1.addItem("-Seleccionar-");
+            for (int i = 0; i < lista_str.size(); i++) {
+                String item = lista_str.get(i);
+                ComboBox1.addItem(item);
+            }
+            ComboBox1.addItem("Añadir Categoria");
+            
+        } catch (Exception e) {
+        }
+    }
+    
+    public void actualizarTabla(){
+        try{
+            DefaultTableModel modelo = new  DefaultTableModel();
+            tablaProductos.setModel(modelo);
+            
+            PreparedStatement ps = null;
+            ResultSet rs = null;
+            java.sql.Connection conn = new ConexionDB().connect();
+    
+            
+            String sql = "SELECT P.id_producto,P.nombre_producto,P.cantidad_disp,P.id_categoria,C.nombre_categoria  FROM productos as P,categorias as C WHERE P.id_categoria in (SELECT C.id_categoria FROM categorias)";                    
+            ps = conn.prepareStatement(sql);
+            rs = ps.executeQuery();
+
+            
+            ResultSetMetaData rsMd = (ResultSetMetaData) rs.getMetaData();
+            
+            int cantidadColumnas = rsMd.getColumnCount();
+            
+            modelo.addColumn("Id");
+            modelo.addColumn("Nombre");
+            modelo.addColumn("Cantidad");
+            modelo.addColumn("Id Categoria");
+            modelo.addColumn("Nombre Categoria");
+
+            
+
+            int anchos[] = {30, 80, 30, 50 ,30 , 100 };
+            for (int i = 0; i < tablaProductos.getColumnCount(); i++) {
+                tablaProductos.getColumnModel().getColumn(i).setPreferredWidth(anchos[i]);                
+            }
+            
+            while(rs.next()){
+                Object[] filas = new Object[cantidadColumnas];
+                for (int i = 0; i < cantidadColumnas; i++) {
+                    filas[i] = rs.getObject(i + 1);
+                }
+                modelo.addRow(filas);
+            }
+            
+        }catch(SQLException ex){
+            System.err.println(ex.toString());
+        }
+    }
+       
 
     /**
      * @param args the command line arguments
@@ -338,17 +592,21 @@ public class VentanaProductos extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> ComboBox1;
+    private javax.swing.JTextField Txt_id_Buscar;
+    private javax.swing.JLabel btBuscar;
     private javax.swing.JLabel btnEditar;
     private javax.swing.JLabel btnEliminar;
     private javax.swing.JLabel btnGuardar;
     private javax.swing.JLabel btnVolver;
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
@@ -358,9 +616,10 @@ public class VentanaProductos extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JSeparator jSeparator4;
-    private javax.swing.JTable tablaProducto;
+    private javax.swing.JSeparator jSeparator5;
+    private javax.swing.JTable tablaProductos;
+    private javax.swing.JTextField txtCant;
+    private javax.swing.JTextField txtId;
     private javax.swing.JTextField txtNombre;
-    private javax.swing.JTextField txtNombre1;
-    private javax.swing.JTextField txtNombre2;
     // End of variables declaration//GEN-END:variables
 }

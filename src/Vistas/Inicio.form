@@ -132,7 +132,7 @@
                           <Color blue="52" green="4f" red="35" type="rgb"/>
                         </Property>
                         <Property name="horizontalAlignment" type="int" value="0"/>
-                        <Property name="text" type="java.lang.String" value="Ver tabla"/>
+                        <Property name="text" type="java.lang.String" value="Ver tabla Productos"/>
                         <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
                           <Color id="Hand Cursor"/>
                         </Property>

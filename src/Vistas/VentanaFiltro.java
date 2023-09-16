@@ -1,17 +1,32 @@
 
 package Vistas;
 
+import ConexioDB.ConexionDB;
+import Modelos.Categoria;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import javax.swing.table.DefaultTableModel;
+import Controladores.ControladorVentanaFiltro;
+import Modelos.Producto;
+
 /**
  *
  * @author diaza
  */
 public class VentanaFiltro extends javax.swing.JFrame {
+    private ControladorVentanaFiltro controlador;
 
     /**
      * Creates new form VentanaFiltro
      */
     public VentanaFiltro() {
         initComponents();
+        this.controlador = new ControladorVentanaFiltro();
+        actualizarTabla();
+        actualizarComboBox();
     }
 
     /**
@@ -24,16 +39,16 @@ public class VentanaFiltro extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        tabla = new javax.swing.JTable();
         jPanel3 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
-        jPanel2 = new javax.swing.JPanel();
-        btnBuscar = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        ComboBox1 = new javax.swing.JComboBox<>();
         jPanel4 = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tablaProductos = new javax.swing.JTable();
+        jPanel2 = new javax.swing.JPanel();
+        btnVolver = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -41,9 +56,48 @@ public class VentanaFiltro extends javax.swing.JFrame {
         jPanel1.setForeground(new java.awt.Color(47, 62, 70));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        tabla.setBackground(new java.awt.Color(255, 255, 255));
-        tabla.setForeground(new java.awt.Color(74, 87, 89));
-        tabla.setModel(new javax.swing.table.DefaultTableModel(
+        jPanel3.setBackground(new java.awt.Color(92, 107, 115));
+        jPanel3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(222, 226, 230), 8));
+        jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(222, 226, 230));
+        jLabel3.setText("Ingrese el número de id: ");
+        jPanel3.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 30, -1, 30));
+
+        jSeparator1.setBackground(new java.awt.Color(255, 255, 255));
+        jSeparator1.setForeground(new java.awt.Color(255, 255, 255));
+        jSeparator1.setAlignmentX(1.0F);
+        jSeparator1.setAlignmentY(1.0F);
+        jPanel3.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 60, 130, 10));
+
+        ComboBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ComboBox1ActionPerformed(evt);
+            }
+        });
+        jPanel3.add(ComboBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 30, 130, 30));
+
+        jPanel1.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 570, 100));
+
+        jPanel4.setBackground(new java.awt.Color(92, 107, 115));
+
+        jPanel5.setBackground(new java.awt.Color(222, 226, 230));
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 570, Short.MAX_VALUE)
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 10, Short.MAX_VALUE)
+        );
+
+        tablaProductos.setBackground(new java.awt.Color(255, 255, 255));
+        tablaProductos.setForeground(new java.awt.Color(74, 87, 89));
+        tablaProductos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null},
                 {null, null, null, null, null},
@@ -66,46 +120,29 @@ public class VentanaFiltro extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        tabla.setSelectionBackground(new java.awt.Color(74, 87, 89));
-        tabla.setSelectionForeground(new java.awt.Color(255, 255, 255));
-        jScrollPane1.setViewportView(tabla);
-        if (tabla.getColumnModel().getColumnCount() > 0) {
-            tabla.getColumnModel().getColumn(0).setResizable(false);
-            tabla.getColumnModel().getColumn(1).setResizable(false);
-            tabla.getColumnModel().getColumn(2).setResizable(false);
-            tabla.getColumnModel().getColumn(3).setResizable(false);
-            tabla.getColumnModel().getColumn(4).setResizable(false);
+        tablaProductos.setSelectionBackground(new java.awt.Color(74, 87, 89));
+        tablaProductos.setSelectionForeground(new java.awt.Color(255, 255, 255));
+        jScrollPane1.setViewportView(tablaProductos);
+        if (tablaProductos.getColumnModel().getColumnCount() > 0) {
+            tablaProductos.getColumnModel().getColumn(0).setResizable(false);
+            tablaProductos.getColumnModel().getColumn(1).setResizable(false);
+            tablaProductos.getColumnModel().getColumn(2).setResizable(false);
+            tablaProductos.getColumnModel().getColumn(3).setResizable(false);
+            tablaProductos.getColumnModel().getColumn(4).setResizable(false);
         }
-
-        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 140, 550, 150));
-
-        jPanel3.setBackground(new java.awt.Color(92, 107, 115));
-        jPanel3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(222, 226, 230), 8));
-        jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(222, 226, 230));
-        jLabel3.setText("Ingrese el número de id: ");
-        jPanel3.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 30, -1, 30));
-
-        jSeparator1.setBackground(new java.awt.Color(255, 255, 255));
-        jSeparator1.setForeground(new java.awt.Color(255, 255, 255));
-        jSeparator1.setAlignmentX(1.0F);
-        jSeparator1.setAlignmentY(1.0F);
-        jPanel3.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 60, 130, 10));
 
         jPanel2.setBackground(new java.awt.Color(222, 226, 230));
         jPanel2.setForeground(new java.awt.Color(222, 226, 230));
 
-        btnBuscar.setBackground(new java.awt.Color(53, 79, 82));
-        btnBuscar.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        btnBuscar.setForeground(new java.awt.Color(53, 79, 82));
-        btnBuscar.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        btnBuscar.setText("Buscar");
-        btnBuscar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnBuscar.addMouseListener(new java.awt.event.MouseAdapter() {
+        btnVolver.setBackground(new java.awt.Color(53, 79, 82));
+        btnVolver.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnVolver.setForeground(new java.awt.Color(53, 79, 82));
+        btnVolver.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        btnVolver.setText("Volver");
+        btnVolver.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnVolver.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnBuscarMouseClicked(evt);
+                btnVolverMouseClicked(evt);
             }
         });
 
@@ -114,36 +151,15 @@ public class VentanaFiltro extends javax.swing.JFrame {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addComponent(btnBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnVolver, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addComponent(btnBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
-        );
-
-        jPanel3.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 30, 100, 30));
-
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1" }));
-        jPanel3.add(jComboBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 30, 130, 30));
-
-        jPanel1.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 570, 100));
-
-        jPanel4.setBackground(new java.awt.Color(92, 107, 115));
-
-        jPanel5.setBackground(new java.awt.Color(222, 226, 230));
-
-        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
-        jPanel5.setLayout(jPanel5Layout);
-        jPanel5Layout.setHorizontalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 570, Short.MAX_VALUE)
-        );
-        jPanel5Layout.setVerticalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 10, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(btnVolver))
         );
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
@@ -151,16 +167,26 @@ public class VentanaFiltro extends javax.swing.JFrame {
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 550, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(204, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(50, Short.MAX_VALUE))
         );
 
-        jPanel1.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 100, 570, 220));
+        jPanel1.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 100, 570, 260));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -177,11 +203,128 @@ public class VentanaFiltro extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnBuscarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnBuscarMouseClicked
+    private void btnVolverMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnVolverMouseClicked
+        this.dispose();
+        Inicio ini = new Inicio();
+        ini.setVisible(true);        
+    }//GEN-LAST:event_btnVolverMouseClicked
 
+    private void ComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ComboBox1ActionPerformed
+        Object selectedItem = ComboBox1.getSelectedItem();
+        if (selectedItem != null && selectedItem.toString().equals("-Seleccionar-")) {
+            actualizarTabla();
+        }else{
+            String categoria1 = ComboBox1.getSelectedItem().toString();
+            String[] catediv = categoria1.split("-",2);
+            int id_categoria = Integer.parseInt(catediv[0]);
+            String nombre_categoria = catediv[1];
         
-    }//GEN-LAST:event_btnBuscarMouseClicked
+            actualizarTablaFiltro(id_categoria , nombre_categoria);
+        }
+        
+        
+    }//GEN-LAST:event_ComboBox1ActionPerformed
 
+    
+    public void actualizarTabla(){
+        try{
+            DefaultTableModel modelo = new  DefaultTableModel();
+            tablaProductos.setModel(modelo);
+            
+            PreparedStatement ps = null;
+            ResultSet rs = null;
+            java.sql.Connection conn = new ConexionDB().connect();
+    
+            
+            String sql = "SELECT P.id_producto,P.nombre_producto,P.cantidad_disp,P.id_categoria,C.nombre_categoria  FROM productos as P,categorias as C WHERE P.id_categoria in (SELECT C.id_categoria FROM categorias)";                    
+            ps = conn.prepareStatement(sql);
+            rs = ps.executeQuery();
+
+            
+            ResultSetMetaData rsMd = (ResultSetMetaData) rs.getMetaData();
+            
+            int cantidadColumnas = rsMd.getColumnCount();
+            
+            modelo.addColumn("Id");
+            modelo.addColumn("Nombre");
+            modelo.addColumn("Cantidad");
+            modelo.addColumn("Id Categoria");
+            modelo.addColumn("Nombre Categoria");
+
+            
+
+            int anchos[] = {30, 80, 30, 50 ,30 , 100 };
+            for (int i = 0; i < tablaProductos.getColumnCount(); i++) {
+                tablaProductos.getColumnModel().getColumn(i).setPreferredWidth(anchos[i]);                
+            }
+            
+            while(rs.next()){
+                Object[] filas = new Object[cantidadColumnas];
+                for (int i = 0; i < cantidadColumnas; i++) {
+                    filas[i] = rs.getObject(i + 1);
+                }
+                modelo.addRow(filas);
+            }
+            
+        }catch(SQLException ex){
+            System.err.println(ex.toString());
+        }
+    }
+    
+    public void actualizarComboBox(){
+        ComboBox1.removeAllItems();
+        ArrayList<String> lista_str = new ArrayList();
+        
+        
+        try{
+            ArrayList<Categoria> listaCategorias = controlador.traerCategorias();
+            for (int i = 0; i < listaCategorias.size(); i++) {
+                Categoria categoria = listaCategorias.get(i);
+                String id_categoria = String.valueOf(categoria.getId_categoria());
+                String nombre_categoria = categoria.getNombre_categoria();
+                lista_str.add(id_categoria + "-" +nombre_categoria);  
+            }
+            ComboBox1.addItem("-Seleccionar-");
+            
+            for (int i = 0; i < lista_str.size(); i++) {
+                String item = lista_str.get(i);
+                ComboBox1.addItem(item);
+            }
+            
+            
+        } catch (Exception e) {
+        }
+    }
+    
+    private void actualizarTablaFiltro(int id_categoria , String nombre_categoria) {
+        DefaultTableModel modelo = new  DefaultTableModel();
+        tablaProductos.setModel(modelo);
+        modelo.addColumn("Id");
+            modelo.addColumn("Nombre");
+            modelo.addColumn("Cantidad");
+            modelo.addColumn("Id Categoria");
+            modelo.addColumn("Nombre Categoria");
+        try{
+            for (int i = 0; i < 3 ; i++) {
+                for (int j = 0; j < modelo.getRowCount(); j++) {
+                    modelo.removeRow(j);
+                }
+            }
+        }catch(NullPointerException e){
+        }
+        try{
+            ArrayList<Producto> listaProductos = controlador.obtenerProductos(id_categoria);
+
+            for (int i = 0; i < listaProductos.size() ; i++) {
+                Producto aux = listaProductos.get(i);
+               
+                    Object[] ob = {aux.getId_producto(), aux.getNombre_producto(), aux.getCantidad_disp(), aux.getId_categoria() , nombre_categoria };
+                    modelo.addRow(ob);
+                
+                }
+        }catch( SQLException ex){        
+        }
+    }
     /**
      * @param args the command line arguments
      */
@@ -218,8 +361,8 @@ public class VentanaFiltro extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel btnBuscar;
-    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JComboBox<String> ComboBox1;
+    private javax.swing.JLabel btnVolver;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
@@ -228,6 +371,8 @@ public class VentanaFiltro extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JTable tabla;
+    private javax.swing.JTable tablaProductos;
     // End of variables declaration//GEN-END:variables
+
+    
 }
