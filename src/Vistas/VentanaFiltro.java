@@ -233,7 +233,7 @@ public class VentanaFiltro extends javax.swing.JFrame {
             
             PreparedStatement ps = null;
             ResultSet rs = null;
-            java.sql.Connection conn = new ConexionDB().connect();
+            java.sql.Connection conn = ConexionDB.getINSTANCE().getConnection();
     
             
             String sql = "SELECT P.id_producto,P.nombre_producto,P.cantidad_disp,P.id_categoria,C.nombre_categoria  FROM productos as P,categorias as C WHERE P.id_categoria in (SELECT C.id_categoria FROM categorias)";                    
@@ -325,6 +325,8 @@ public class VentanaFiltro extends javax.swing.JFrame {
         }catch( SQLException ex){        
         }
     }
+    
+    
     /**
      * @param args the command line arguments
      */

@@ -2,15 +2,6 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/C:/Users/cduar/OneDrive/Documentos/Programacion/EAM/Semestre_4/Diseno_Software/tallerProductos/src/Controladores/ControladorVentanaFiltro.java</file>
-            <file>file:/C:/Users/cduar/OneDrive/Documentos/Programacion/EAM/Semestre_4/Diseno_Software/tallerProductos/src/servicios/ServiceProducto.java</file>
-            <file>file:/C:/Users/cduar/OneDrive/Documentos/Programacion/EAM/Semestre_4/Diseno_Software/tallerProductos/src/Vistas/VentanaProductos.java</file>
-            <file>file:/C:/Users/cduar/OneDrive/Documentos/Programacion/EAM/Semestre_4/Diseno_Software/tallerProductos/src/Controladores/ControladorVentanaProductos.java</file>
-            <file>file:/C:/Users/cduar/OneDrive/Documentos/Programacion/EAM/Semestre_4/Diseno_Software/tallerProductos/src/Vistas/VentanaFiltro.java</file>
-            <file>file:/C:/Users/cduar/OneDrive/Documentos/Programacion/EAM/Semestre_4/Diseno_Software/tallerProductos/src/servicios/ServiceCategoria.java</file>
-            <file>file:/C:/Users/cduar/OneDrive/Documentos/Programacion/EAM/Semestre_4/Diseno_Software/tallerProductos/src/ConexioDB/ConexionDB.java</file>
-            <file>file:/C:/Users/cduar/OneDrive/Documentos/Programacion/EAM/Semestre_4/Diseno_Software/tallerProductos/src/Vistas/VentanaCategorias.java</file>
-        </group>
+        <group/>
     </open-files>
 </project-private>

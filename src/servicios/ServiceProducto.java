@@ -26,19 +26,21 @@ import javax.swing.table.DefaultTableModel;
  * @author cduar
  */
 public class ServiceProducto {
-    private static ServiceProducto  INSTANCE = new ServiceProducto ();
+    private static ServiceProducto  INSTANCE ;
     
-    private static Connection conn = new ConexionDB().connect();
+    private static Connection conn ;
     
-    public ServiceProducto () {
+ 
+    private ServiceProducto () {
+        conn = ConexionDB.getINSTANCE().getConnection();
     }
-
-    public static ServiceProducto  getINSTANCE() {
+    
+    public static ServiceProducto getINSTANCE() {
+        if(INSTANCE == null){
+            INSTANCE = new ServiceProducto();
+        }
         return INSTANCE;
-    } 
-    
-    
-    
+    }
     
     public static Producto  buscarProducto(int id_producto  ) {
         ResultSet rs = null;
@@ -195,8 +197,6 @@ public class ServiceProducto {
             String sql = "SELECT id_producto,nombre_producto,cantidad_disp FROM productos WHERE id_categoria=? ;" ;
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setInt(1, id_categoria );
-            
-
 
             rs = preparedStatement.executeQuery();
 
@@ -206,25 +206,12 @@ public class ServiceProducto {
                 
                 int cantidad_disp = rs.getInt("cantidad_disp");
                 int id_producto = rs.getInt("id_producto");
-                
-                
-                
-                
-                Producto producto = new Producto(id_producto, nombre_producto, cantidad_disp, id_categoria);
-                productos.add(producto);
-                
-                
-                
-                        
-           }
-            
-           return productos;
-//            else {
-//                JOptionPane.showMessageDialog(null, " El producto no se encuentra en la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
-//                return null;
-//            }
 
-            
+                Producto producto = new Producto(id_producto, nombre_producto, cantidad_disp, id_categoria);
+                productos.add(producto);             
+           }
+           return productos;
+
         } catch (SQLException ex) {
             Logger.getLogger(ServiceProducto.class.getName()).log(Level.SEVERE, null, ex);
         }

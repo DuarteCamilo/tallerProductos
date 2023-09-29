@@ -15,22 +15,30 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
+
 /**
  *
  * @author cduar
  */
 public class ServiceCategoria {
     
-    private static ServiceCategoria  INSTANCE = new ServiceCategoria ();
+    private static ServiceCategoria  INSTANCE ;
     
-    private static Connection conn = new ConexionDB().connect();
+    private static Connection conn ;
     
-    public ServiceCategoria () {
+ 
+    private ServiceCategoria () {
+        conn = ConexionDB.getINSTANCE().getConnection();
     }
-
-    public static ServiceCategoria  getINSTANCE() {
+    
+    public static ServiceCategoria getINSTANCE() {
+        if(INSTANCE == null){
+            INSTANCE = new ServiceCategoria();
+        }
         return INSTANCE;
-    } 
+    }
+    
+    
     
     public String obternerCategoria(int id_categoria){
         String categoria = null;
@@ -221,28 +229,36 @@ public class ServiceCategoria {
         }
     }
      
-     public static  void eliminarCategoria( int id_categoria ){
-        try{
+     public static void eliminarCategoria(int id_categoria) {
+    try {
+        String productosEnCategoriaSql = "SELECT COUNT(*) FROM productos WHERE id_categoria = ?";
+        PreparedStatement productosEnCategoriaStatement = conn.prepareStatement(productosEnCategoriaSql);
+        productosEnCategoriaStatement.setInt(1, id_categoria);
+        ResultSet productosEnCategoriaResult = productosEnCategoriaStatement.executeQuery();
+        
+        if (productosEnCategoriaResult.next()) {
+            int cantidadProductos = productosEnCategoriaResult.getInt(1);
             
-            
-            String sql = "DELETE from categorias where id_categoria=?;";
-            PreparedStatement preparedStatement = conn.prepareStatement(sql);
-            preparedStatement.setInt(1, id_categoria );
-            
-            
-            
-            preparedStatement.executeUpdate();
-
-            preparedStatement.close();
-            
-            JOptionPane.showMessageDialog(null, "Categoria eliminada");
-
-            
-            conn.close();
-   
-        }catch(Exception ex){
-            Logger.getLogger(ServiceProducto.class.getName()).log(Level.SEVERE, null, ex);  
+            if (cantidadProductos > 0) {
+                JOptionPane.showMessageDialog(null, "No se puede eliminar la categoría, hay " + cantidadProductos + " productos asociados a ella.");
+                return;
+            }
         }
+        
+        String eliminarCategoriaSql = "DELETE FROM categorias WHERE id_categoria = ?";
+        PreparedStatement preparedStatement = conn.prepareStatement(eliminarCategoriaSql);
+        preparedStatement.setInt(1, id_categoria);
 
+        preparedStatement.executeUpdate();
+
+        preparedStatement.close();
+
+        JOptionPane.showMessageDialog(null, "Categoría eliminada");
+
+        conn.close();
+    } catch (Exception ex) {
+        Logger.getLogger(ServiceProducto.class.getName()).log(Level.SEVERE, null, ex);
     }
+}
+
 }

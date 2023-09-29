@@ -391,7 +391,7 @@ public class VentanaCategorias extends javax.swing.JFrame {
             
             PreparedStatement ps = null;
             ResultSet rs = null;
-            java.sql.Connection conn = new ConexionDB().connect();
+            java.sql.Connection conn = ConexionDB.getINSTANCE().getConnection();
     
             
             String sql = "SELECT id_categoria,nombre_categoria  FROM categorias;";                    

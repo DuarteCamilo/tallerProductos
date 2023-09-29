@@ -579,11 +579,11 @@ public class VentanaProductos extends javax.swing.JFrame {
         
     }
     
-    public int obtenerIdCategoria(String nombreCategoria) {
+    public int obtenerIdCategoria(String nombre_Categoria) {
         try {
             ArrayList<Categoria> listaCategorias = controlador.traerCategorias();
             for (Categoria categoria : listaCategorias) {
-                if (categoria.getNombre_categoria().equals(nombreCategoria)) {
+                if (categoria.getNombre_categoria().equals(nombre_Categoria)) {
                     return categoria.getId_categoria();
                 }
             }
@@ -632,7 +632,7 @@ public class VentanaProductos extends javax.swing.JFrame {
             
             PreparedStatement ps = null;
             ResultSet rs = null;
-            java.sql.Connection conn = new ConexionDB().connect();
+            java.sql.Connection conn = ConexionDB.getINSTANCE().getConnection();
     
             
             String sql = "SELECT P.id_producto,P.nombre_producto,P.cantidad_disp,P.id_categoria,C.nombre_categoria  FROM productos as P,categorias as C WHERE P.id_categoria in (SELECT C.id_categoria FROM categorias)";                    

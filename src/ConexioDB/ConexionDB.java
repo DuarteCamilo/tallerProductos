@@ -12,21 +12,33 @@ import java.sql.SQLException;
 public class ConexionDB{
 
     private final String url = "jdbc:postgresql://db.rflyerrixmkjzhmxkgml.supabase.co:5432/postgres?user=postgres&password=kmilo_1004826575";
-
+    private static ConexionDB INSTANCE;
+    private static Connection conn;
     /**
      * Connect to the PostgreSQL database
      *
      * @return a Connection object
      */ 
-    public Connection connect() {
-        Connection conn = null;
+    public ConexionDB () {
+        
         try {
             conn = DriverManager.getConnection(url);
-            //System.out.println("Genial, estamos en linea");
+            System.out.println("Genial, estamos en linea");
         } catch (SQLException e) {
-            //System.out.println(e.getMessage());
+            
+            System.out.println(e.getMessage());
         }
 
+        
+    }
+    
+    public static ConexionDB getINSTANCE() {
+        if(INSTANCE == null){
+            INSTANCE = new ConexionDB();
+        }
+        return INSTANCE;
+    }
+    public Connection getConnection(){
         return conn;
     }
 
@@ -34,7 +46,6 @@ public class ConexionDB{
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        ConexionDB app = new ConexionDB();
-        app.connect();
+        
     }
 }
